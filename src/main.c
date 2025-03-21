@@ -26,7 +26,7 @@ void update() {
 
 void render() {
   SDL_RenderClear(renderer);
-  SDL_SetRenderDrawColor(renderer, 100, 100, 0, 255);
+  SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
   SDL_RenderPresent(renderer);
 }
 
