@@ -1,9 +1,11 @@
 #define SDL_MAIN_USE_CALLBACKS
 #include <SDL3/SDL_main.h>
+#include <SDL3_image/SDL_image.h>
 #include <SDL3/SDL.h>
 
 SDL_Window* window;
 SDL_Renderer* renderer;
+SDL_Texture* player_texture;
 
 void SDL_AppQuit(void *appstate, SDL_AppResult result) {
   SDL_DestroyRenderer(renderer);
@@ -27,6 +29,12 @@ void update() {
 void render() {
   SDL_RenderClear(renderer);
   SDL_SetRenderDrawColor(renderer, 0, 155, 0, 255);
+  // draw our character
+  SDL_FRect sprite_frame = {8,5,15,21};
+  SDL_FRect player_position = {250,250,100,100};
+  SDL_SetTextureScaleMode(player_texture, SDL_SCALEMODE_NEAREST);
+  SDL_RenderTexture(renderer, player_texture, &sprite_frame, &player_position);
+
   SDL_RenderPresent(renderer);
 }
 
@@ -44,7 +52,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
   window = SDL_CreateWindow(
     "SDL3 Game",
     800,
-    600,
+    800,
     0
   );
 
@@ -60,6 +68,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
     return SDL_APP_FAILURE;
   }
 
-  SDL_Log("SDL initialized successfully!");
+  const char path[] = "./assets/Player/Player.png";
+  player_texture = IMG_LoadTexture(renderer, path);
+  
   return SDL_APP_CONTINUE;
 }
