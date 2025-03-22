@@ -1,13 +1,42 @@
 #define SDL_MAIN_USE_CALLBACKS
+#include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <SDL3_image/SDL_image.h>
-#include <SDL3/SDL.h>
+#include "entity.h"
+#include "player.h"
+
+#define HANDLE_EVENTS_ENTITIES(entities, entities_count, event) \
+  for (int i=0; i< entities_count; i++){ \
+    entities[i].handle_events(event); \
+  }
+
+#define QUIT_ENTITIES(entities, entities_count) \
+  for (int i=0; i< entities_count; i++){ \
+    entities[i].quit(); \
+  }
+
+#define RENDER_ENTITIES(entities, entities_count, renderer) \
+  for (int i=0; i< entities_count; i++){ \
+    entities[i].render(renderer); \
+  }
+
+#define UPDATE_ENTITIES(entities, entities_count, delta_time) \
+  for (int i=0; i< entities_count; i++){ \
+    entities[i].update(delta_time); \
+  }
 
 SDL_Window* window;
 SDL_Renderer* renderer;
-SDL_Texture* player_texture;
+
+Entity entities[MAX_ENTITIES];
+int entities_count = 0; 
+
+Uint64 last_tick = 0;
+Uint64 current_tick = 0;
+float delta_time;
 
 void SDL_AppQuit(void *appstate, SDL_AppResult result) {
+  QUIT_ENTITIES(entities, entities_count);
   SDL_DestroyRenderer(renderer);
   renderer = NULL;
   SDL_DestroyWindow(window);
@@ -23,22 +52,24 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
 }
 
 void update() {
-
+  last_tick = current_tick;
+  current_tick = SDL_GetTicks();
+  delta_time = (current_tick - last_tick) / 1000.0f;
+  UPDATE_ENTITIES(entities, entities_count, delta_time);
 }
 
 void render() {
   SDL_RenderClear(renderer);
   SDL_SetRenderDrawColor(renderer, 0, 155, 0, 255);
-  // draw our character
-  SDL_FRect sprite_frame = {8,5,15,21};
-  SDL_FRect player_position = {250,250,100,100};
-  SDL_SetTextureScaleMode(player_texture, SDL_SCALEMODE_NEAREST);
-  SDL_RenderTexture(renderer, player_texture, &sprite_frame, &player_position);
+
+  //render for everything
+  RENDER_ENTITIES(entities, entities_count, renderer);
 
   SDL_RenderPresent(renderer);
 }
 
 SDL_AppResult SDL_AppIterate(void *appstate) {
+  update();
   render();
   return SDL_APP_CONTINUE;
 }
@@ -68,8 +99,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
     return SDL_APP_FAILURE;
   }
 
-  const char path[] = "./assets/Player/Player.png";
-  player_texture = IMG_LoadTexture(renderer, path);
+  // init_player and put that inside of our entities array
+  entities[entities_count++] = init_player(renderer);
   
   return SDL_APP_CONTINUE;
 }
