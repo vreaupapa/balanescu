@@ -4,6 +4,7 @@
 #include <SDL3_image/SDL_image.h>
 #include "entity.h"
 #include "player.h"
+#include "maps.h"
 
 #define HANDLE_EVENTS_ENTITIES(entities, entities_count, event) \
   for (int i=0; i< entities_count; i++){ \
@@ -25,6 +26,7 @@
     entities[i].update(delta_time); \
   }
 
+
 SDL_Window* window;
 SDL_Renderer* renderer;
 
@@ -34,6 +36,8 @@ int entities_count = 0;
 Uint64 last_tick = 0;
 Uint64 current_tick = 0;
 float delta_time;
+const int FPS = 60;
+const int frameDelay = 1000/ FPS; // timpul in milisecunde per cadru
 
 void SDL_AppQuit(void *appstate, SDL_AppResult result) {
   QUIT_ENTITIES(entities, entities_count);
@@ -60,8 +64,8 @@ void update() {
 
 void render() {
   SDL_RenderClear(renderer);
-  SDL_SetRenderDrawColor(renderer, 0, 155, 0, 255);
-
+  //harta pe care umblu
+	render_map(renderer);
   //render for everything
   RENDER_ENTITIES(entities, entities_count, renderer);
 
@@ -69,8 +73,18 @@ void render() {
 }
 
 SDL_AppResult SDL_AppIterate(void *appstate) {
+  Uint32 frameStart = SDL_GetTicks(); //timpul de start al frame-ului
   update();
   render();
+
+  int frameTime = SDL_GetTicks()-frameStart; //Timpul cat a durat frame-ul
+
+  //daca frame ul a durat mai putin decat timpul dorit, asteptam restul
+  if(frameTime < frameDelay)
+  {
+    SDL_Delay(frameDelay-frameTime);
+  }
+
   return SDL_APP_CONTINUE;
 }
 
@@ -82,8 +96,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
 
   window = SDL_CreateWindow(
     "SDL3 Game",
-    800,
-    800,
+    900,
+    900,
     0
   );
 
@@ -98,6 +112,9 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
     SDL_Log("Error creating renderer: %s", SDL_GetError());
     return SDL_APP_FAILURE;
   }
+
+  //incarc texturi pt fundal
+  load_tiles(renderer);
 
   // init_player and put that inside of our entities array
   entities[entities_count++] = init_player(renderer);
