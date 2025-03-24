@@ -36,7 +36,7 @@ int entities_count = 0;
 Uint64 last_tick = 0;
 Uint64 current_tick = 0;
 float delta_time;
-const int FPS = 60;
+const int FPS = 165;
 const int frameDelay = 1000/ FPS; // timpul in milisecunde per cadru
 
 void SDL_AppQuit(void *appstate, SDL_AppResult result) {

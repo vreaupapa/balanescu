@@ -1,4 +1,5 @@
 #include "player.h"
+#include "maps.h"
 
 static SDL_Texture* player_texture;
 static SDL_FRect sprite_frame = {8,5,15,21};
@@ -7,7 +8,28 @@ typedef struct{
 	float x, y;
 } Position;
 
-Position position = {0, 0};
+Position position = {100, 100};
+
+int check_collision(float new_x, float new_y) {
+    int left_x   = (int)(new_x / TILE_SIZE);
+    int right_x  = (int)((new_x + PLAYER_WIDTH - 3) / TILE_SIZE);
+    int top_y    = (int)(new_y / TILE_SIZE);
+    int bottom_y = (int)((new_y + PLAYER_HEIGHT - 7) / TILE_SIZE);
+    int top_y_water = (int)((new_y + PLAYER_HEIGHT +30) / TILE_SIZE);
+
+    if (left_x < 0 || right_x >= MAP_WIDTH || top_y < 0 || bottom_y >= MAP_HEIGHT) {
+        return 3; // coliziune cu marginea hărții
+    }
+
+	if (tile_map[top_y][left_x]==3 || tile_map[top_y][right_x]==3 ||
+        tile_map[bottom_y][left_x]==3 || tile_map[bottom_y][right_x]==3 ||
+		tile_map[top_y][left_x]==2 || tile_map[top_y][right_x]==2 ||
+        tile_map[bottom_y][left_x]==2 || tile_map[bottom_y][right_x]==2) {
+        return 3; // coliziune
+    }
+    
+    return 0;
+}
 
 static void quit(){
 
@@ -18,29 +40,41 @@ static void handle_events()
 
 }
 
-static void update(float delta_time){
-	const _Bool *keyboard_state = SDL_GetKeyboardState(NULL);
+static void update(float delta_time) {
+    float new_x = position.x;
+    float new_y = position.y;
 
-	if(keyboard_state[SDL_SCANCODE_W]){
-		position.y -=100 * delta_time;
-	}
+    const _Bool *keyboard_state = SDL_GetKeyboardState(NULL);
 
-	if(keyboard_state[SDL_SCANCODE_S]){
-		position.y +=100 * delta_time;
-	}
+    if (keyboard_state[SDL_SCANCODE_W]) {
+        new_y -= 100 * delta_time;
+        if (new_y < 0) new_y = 0;  // Pentru a bloca la marginea de sus
+    }
 
-	if(keyboard_state[SDL_SCANCODE_A]){
-		position.x -=100 * delta_time;
-	}
+    if (keyboard_state[SDL_SCANCODE_S]) {
+        new_y += 100 * delta_time;
+    }
 
-	if(keyboard_state[SDL_SCANCODE_D]){
-		position.x +=100 * delta_time;
-	}
+    if (keyboard_state[SDL_SCANCODE_A]) {
+        new_x -= 100 * delta_time;
+        if (new_x < 0) new_x = 0;  // Pentru a bloca la marginea din stanga
+    }
 
+    if (keyboard_state[SDL_SCANCODE_D]) {
+        new_x += 100 * delta_time;
+    }
+
+    if (!check_collision(new_x, position.y)) {
+        position.x = new_x;
+    }
+
+    if (!check_collision(position.x, new_y)) {
+        position.y = new_y;
+    }
 }
 
 static void render(SDL_Renderer* renderer){
-	SDL_FRect player_position = {position.x,position.y,50,50};
+	SDL_FRect player_position = {position.x,position.y,PLAYER_WIDTH,PLAYER_HEIGHT};
 	SDL_SetTextureScaleMode(player_texture, SDL_SCALEMODE_NEAREST);
 	SDL_RenderTexture(renderer, player_texture, &sprite_frame, &player_position);
 }
