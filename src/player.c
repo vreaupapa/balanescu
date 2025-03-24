@@ -15,16 +15,12 @@ int check_collision(float new_x, float new_y) {
     int right_x  = (int)((new_x + PLAYER_WIDTH - 3) / TILE_SIZE);
     int top_y    = (int)(new_y / TILE_SIZE);
     int bottom_y = (int)((new_y + PLAYER_HEIGHT - 7) / TILE_SIZE);
-    int top_y_water = (int)((new_y + PLAYER_HEIGHT +30) / TILE_SIZE);
 
-    if (left_x < 0 || right_x >= MAP_WIDTH || top_y < 0 || bottom_y >= MAP_HEIGHT) {
-        return 3; // coliziune cu marginea hărții
+    if (borders(left_x, right_x, top_y, bottom_y)) {
+        return 3; // coliziune cu marginea hartii
     }
 
-	if (tile_maps[top_y][left_x]==3 || tile_maps[top_y][right_x]==3 ||
-        tile_maps[bottom_y][left_x]==3 || tile_maps[bottom_y][right_x]==3 ||
-		tile_maps[top_y][left_x]==2 || tile_maps[top_y][right_x]==2 ||
-        tile_maps[bottom_y][left_x]==2 || tile_maps[bottom_y][right_x]==2) {
+	if (collisions(left_x, right_x, top_y, bottom_y)) {
         return 3; // coliziune
     }
     
@@ -60,7 +56,7 @@ static void update(float delta_time) {
 
     if (keyboard_state[SDL_SCANCODE_S]) {
         new_y += 100 * delta_time;
-		if (new_y > (MAP_HEIGHT * TILE_SIZE - TILE_SIZE)) {
+		if (new_y > (MAP_HEIGHT * TILE_SIZE - TILE_SIZE) /*&& new_x>(11 * TILE_SIZE) && new_x<(12.20*TILE_SIZE) cod pentru tp specific*/) {
             // Dacă trece de marginea jos, schimbă harta și repoziționează
             if (current_map == 1) {  
                 current_map = 0;

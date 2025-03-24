@@ -5,6 +5,7 @@
 #include "entity.h"
 #include "player.h"
 #include "maps.h"
+#include "cow.h"
 
 #define HANDLE_EVENTS_ENTITIES(entities, entities_count, event) \
   for (int i=0; i< entities_count; i++){ \
@@ -117,6 +118,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
   load_tiles(renderer);
 
   // init_player and put that inside of our entities array
+  entities[entities_count++] = init_cow(renderer);
   entities[entities_count++] = init_player(renderer);
   
   return SDL_APP_CONTINUE;
