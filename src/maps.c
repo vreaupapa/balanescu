@@ -18,6 +18,30 @@ int tile_map[MAP_HEIGHT][MAP_WIDTH] = {
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0}
 };
 
+int map2[MAP_HEIGHT][MAP_WIDTH] = { 
+    {0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0},
+    {0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+    {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1},
+    {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1},
+    {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1},
+    {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1},
+    {1, 1, 0, 0, 0, 2, 2, 0, 0, 0, 1, 1, 1, 1, 1},
+    {1, 1, 0, 0, 0, 0, 2, 0, 0, 0, 1, 1, 1, 1, 1},
+    {1, 1, 0, 0, 0, 0, 2, 0, 0, 0, 1, 1, 1, 1, 1},
+    {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1},
+    {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1}
+};
+
+
+int* maps[NUM_MAPS] = { (int*)tile_map, (int*)map2 };
+int current_map = 0;
+
+int (*tile_maps)[MAP_WIDTH] = tile_map;
+
 SDL_Texture* tile_textures[4];
 
 void load_tiles(SDL_Renderer *renderer) {
@@ -38,15 +62,15 @@ static SDL_FRect sprite_frame = {21,0,22,22};
 void render_map(SDL_Renderer *renderer) {
     for (int y = 0; y < MAP_HEIGHT; y++) {
         for (int x = 0; x < MAP_WIDTH; x++) {
-            int tile_type = tile_map[y][x];
+            int tile_type = tile_maps[y][x];
             if(tile_type!=3){
                 SDL_FRect dest = {x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE};
                 SDL_RenderTexture(renderer, tile_textures[tile_type], NULL, &dest);
             }
         }
     }
-    for(int y=2; y < 9; y++){
-        SDL_FRect dest = {y*TILE_SIZE, 8*TILE_SIZE, TILE_SIZE, TILE_SIZE};
-        SDL_RenderTexture(renderer, tile_textures[3], &sprite_frame, &dest);
-    }
+    // for(int y=2; y < 9; y++){
+    //     SDL_FRect dest = {y*TILE_SIZE, 8*TILE_SIZE, TILE_SIZE, TILE_SIZE};
+    //     SDL_RenderTexture(renderer, tile_textures[3], &sprite_frame, &dest);
+    // }
 }

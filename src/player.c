@@ -21,10 +21,10 @@ int check_collision(float new_x, float new_y) {
         return 3; // coliziune cu marginea hărții
     }
 
-	if (tile_map[top_y][left_x]==3 || tile_map[top_y][right_x]==3 ||
-        tile_map[bottom_y][left_x]==3 || tile_map[bottom_y][right_x]==3 ||
-		tile_map[top_y][left_x]==2 || tile_map[top_y][right_x]==2 ||
-        tile_map[bottom_y][left_x]==2 || tile_map[bottom_y][right_x]==2) {
+	if (tile_maps[top_y][left_x]==3 || tile_maps[top_y][right_x]==3 ||
+        tile_maps[bottom_y][left_x]==3 || tile_maps[bottom_y][right_x]==3 ||
+		tile_maps[top_y][left_x]==2 || tile_maps[top_y][right_x]==2 ||
+        tile_maps[bottom_y][left_x]==2 || tile_maps[bottom_y][right_x]==2) {
         return 3; // coliziune
     }
     
@@ -48,11 +48,26 @@ static void update(float delta_time) {
 
     if (keyboard_state[SDL_SCANCODE_W]) {
         new_y -= 100 * delta_time;
-        if (new_y < 0) new_y = 0;  // Pentru a bloca la marginea de sus
+        if (new_y < 0) {  
+            // Dacă trece de marginea sus, schimbă harta și repoziționează
+            if (current_map == 0) {  
+                current_map = 1;
+                tile_maps = (int (*)[MAP_WIDTH])maps[current_map];
+                new_y = MAP_HEIGHT * TILE_SIZE - TILE_SIZE;  // Apare jos pe noua hartă
+            }
+        }
     }
 
     if (keyboard_state[SDL_SCANCODE_S]) {
         new_y += 100 * delta_time;
+		if (new_y > (MAP_HEIGHT * TILE_SIZE - TILE_SIZE)) {
+            // Dacă trece de marginea jos, schimbă harta și repoziționează
+            if (current_map == 1) {  
+                current_map = 0;
+                tile_maps = (int (*)[MAP_WIDTH])maps[current_map];
+                new_y = 0;  // Apare sus pe noua hartă
+            }
+        }
     }
 
     if (keyboard_state[SDL_SCANCODE_A]) {
