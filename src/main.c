@@ -32,7 +32,7 @@ SDL_Window* window;
 SDL_Renderer* renderer;
 
 Entity entities[MAX_ENTITIES];
-int entities_count = 0; 
+int entities_count = 0;
 
 Uint64 last_tick = 0;
 Uint64 current_tick = 0;
@@ -50,9 +50,13 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result) {
 }
 
 SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
+
   if (event->type == SDL_EVENT_QUIT) {
     return SDL_APP_SUCCESS;
   }
+
+  HANDLE_EVENTS_ENTITIES(entities, entities_count, event);
+
   return SDL_APP_CONTINUE;
 }
 
@@ -67,6 +71,8 @@ void render() {
   SDL_RenderClear(renderer);
   //harta pe care umblu
 	render_map(renderer);
+  //render for button
+  render_button(renderer);
   //render for everything
   RENDER_ENTITIES(entities, entities_count, renderer);
 
@@ -119,7 +125,10 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
 
   // init_player and put that inside of our entities array
   entities[entities_count++] = init_cow(renderer);
+  entities[entities_count++] = init_cow(renderer);
   entities[entities_count++] = init_player(renderer);
   
   return SDL_APP_CONTINUE;
 }
+
+//vom lua un vector de pozitii pe care il vom transmite vacii

@@ -1,5 +1,7 @@
 #include "maps.h"
 
+Button button = { BUTTON_X, BUTTON_Y, 60, 60};
+
 int tile_map[MAP_HEIGHT][MAP_WIDTH] = {
     {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0},
     {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0},
@@ -9,7 +11,7 @@ int tile_map[MAP_HEIGHT][MAP_WIDTH] = {
     {1, 1, 0, 0, 2, 2, 0, 0, 0, 1, 1, 1, 1, 0, 0},
     {1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
     {1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
-    {1, 1, 3, 3, 3, 3, 3, 3, 3, 1, 1, 0, 0, 0, 0},
+    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0},
     {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
     {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0},
@@ -44,6 +46,15 @@ int (*tile_maps)[MAP_WIDTH] = tile_map;
 
 SDL_Texture* tile_textures[4];
 
+// void activate_button() {
+//     if (money >= button.price) {
+//         money -= button.price;
+//         SDL_Log("Ai cumpărat un obiect! Bani rămași: %d", money);
+//     } else {
+//         SDL_Log("Nu ai destui bani!");
+//     }
+// }
+
 void load_tiles(SDL_Renderer *renderer) {
     tile_textures[0] = IMG_LoadTexture(renderer, "./assets/Tiles/pixel.jpg");
     tile_textures[1] = IMG_LoadTexture(renderer, "./assets/Tiles/Path_middle.png");
@@ -58,6 +69,12 @@ void load_tiles(SDL_Renderer *renderer) {
 }
 
 static SDL_FRect sprite_frame = {21,0,22,22};
+
+void render_button(SDL_Renderer *renderer) {
+    SDL_FRect button_rect = { button.x, button.y, button.width, button.height };
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);  // Roșu
+    SDL_RenderFillRect(renderer, &button_rect);
+}
   
 void render_map(SDL_Renderer *renderer) {
     for (int y = 0; y < MAP_HEIGHT; y++) {

@@ -9,7 +9,7 @@ typedef struct{
 	float x, y;
 } Position_cow;
 
-Position_cow position_cow = {500, 500};
+Position_cow position_cow = {TILE_SIZE*1-TILE_SIZE/2, TILE_SIZE*11};
 
 static void quit(){
 
@@ -33,7 +33,6 @@ static void render(SDL_Renderer* renderer){
 }
 
 Entity init_cow(SDL_Renderer* renderer) {
-
 	const char path[] = "./assets/Animals/Cow/Cow.png";
 	cow_texture = IMG_LoadTexture(renderer, path);
 

@@ -1,8 +1,10 @@
 #include "player.h"
 #include "maps.h"
+#include "cow.h"
 
 static SDL_Texture* player_texture;
 static SDL_FRect sprite_frame = {8,5,15,21};
+int money = 100;
 
 typedef struct{
 	float x, y;
@@ -27,18 +29,40 @@ int check_collision(float new_x, float new_y) {
     return 0;
 }
 
+int is_near_button() {
+    if(position.x>BUTTON_X && position.x<BUTTON_X+TILE_SIZE \
+        && position.y >BUTTON_Y && position.y < BUTTON_Y+TILE_SIZE)
+    {
+        return 1;
+    }
+    
+    return 0;
+}
+
 static void quit(){
 
 }
 
-static void handle_events()
+static void handle_events(SDL_Event *event)
 {
+    
+    if(event->key.key == SDLK_E && event->key.repeat == 0 \
+        && event->key.down && is_near_button() && current_map == 0){
+        if(money>=COW_PRICE)
+        {
+            money-=COW_PRICE;
+            SDL_Log("Ai cumparat o vaca!\nMai ai %d bani!", money);
+        }
+        else
+            SDL_Log("Nu ai destui bani! ");
 
+    }
 }
 
 static void update(float delta_time) {
     float new_x = position.x;
     float new_y = position.y;
+    //static int last_time_for_money = 0;
 
     const _Bool *keyboard_state = SDL_GetKeyboardState(NULL);
 
@@ -56,7 +80,8 @@ static void update(float delta_time) {
 
     if (keyboard_state[SDL_SCANCODE_S]) {
         new_y += 100 * delta_time;
-		if (new_y > (MAP_HEIGHT * TILE_SIZE - TILE_SIZE) /*&& new_x>(11 * TILE_SIZE) && new_x<(12.20*TILE_SIZE) cod pentru tp specific*/) {
+		if (new_y > (MAP_HEIGHT * TILE_SIZE - TILE_SIZE) \
+        /*&& new_x>(11 * TILE_SIZE) && new_x<(12.20*TILE_SIZE) cod pentru tp specific*/) {
             // Dacă trece de marginea jos, schimbă harta și repoziționează
             if (current_map == 1) {  
                 current_map = 0;
@@ -82,6 +107,13 @@ static void update(float delta_time) {
     if (!check_collision(position.x, new_y)) {
         position.y = new_y;
     }
+    // uint32_t current_time = SDL_GetTicks();
+    // if(current_time-last_time_for_money > 5000)
+    // {
+    //     money+=20;
+    //     SDL_Log("Ai primit 20 de bani!");
+    //     last_time_for_money = current_time;
+    // } // primesti 20 de bani pasiv o data la 5 secunde
 }
 
 static void render(SDL_Renderer* renderer){
