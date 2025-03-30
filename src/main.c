@@ -3,7 +3,7 @@
 #include <SDL3/SDL_main.h>
 #include <SDL3_image/SDL_image.h>
 #include "entity.h"
-#include "player.h"
+//#include "player.h"
 #include "maps.h"
 #include "cow.h"
 
@@ -19,7 +19,7 @@
 
 #define RENDER_ENTITIES(entities, entities_count, renderer) \
   for (int i=0; i< entities_count; i++){ \
-    entities[i].render(renderer); \
+    entities[i].render(renderer, &entities[i]); \
   }
 
 #define UPDATE_ENTITIES(entities, entities_count, delta_time) \
@@ -124,11 +124,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
   load_tiles(renderer);
 
   // init_player and put that inside of our entities array
-  entities[entities_count++] = init_cow(renderer);
-  entities[entities_count++] = init_cow(renderer);
+  entities[entities_count++] = init_cow(renderer, TILE_SIZE * 0.5, TILE_SIZE * 11);
   entities[entities_count++] = init_player(renderer);
   
   return SDL_APP_CONTINUE;
 }
-
-//vom lua un vector de pozitii pe care il vom transmite vacii

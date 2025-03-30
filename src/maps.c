@@ -71,9 +71,11 @@ void load_tiles(SDL_Renderer *renderer) {
 static SDL_FRect sprite_frame = {21,0,22,22};
 
 void render_button(SDL_Renderer *renderer) {
-    SDL_FRect button_rect = { button.x, button.y, button.width, button.height };
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);  // Roșu
-    SDL_RenderFillRect(renderer, &button_rect);
+    if(current_map == 0) {
+        SDL_FRect button_rect = { button.x, button.y, button.width, button.height };
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);  // Roșu
+        SDL_RenderFillRect(renderer, &button_rect);
+    }
 }
   
 void render_map(SDL_Renderer *renderer) {
