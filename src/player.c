@@ -1,15 +1,20 @@
 #include "player.h"
 #include "maps.h"
+#include "cow.h"
+#include "entity.h"
+#include "inventory.h"
 
+SDL_Renderer* renderer_cow;
 static SDL_Texture* player_texture;
 static SDL_FRect sprite_frame = {8,5,15,21};
-int money = 100;
+int money = 100; // bani initiali
+int farm_time[5][7] = {0}; // timpul de crestere al plantelor
 
 typedef struct{
 	float x, y;
-} Position;
+} Position_player;
 
-Position position = {100, 100};
+Position_player position_player = {100, 100};
 
 int check_collision(float new_x, float new_y) {
     int left_x   = (int)(new_x / TILE_SIZE);
@@ -28,9 +33,13 @@ int check_collision(float new_x, float new_y) {
     return 0;
 }
 
-int is_near_button() {
-    if(position.x>TILE_SIZE*7 && position.x<TILE_SIZE*8 \
-        && position.y >TILE_SIZE*4 && position.y < TILE_SIZE*5)
+int is_near_button_cow() {
+    return (position_player.x>BUTTON_X && position_player.x<BUTTON_X+TILE_SIZE \
+        && position_player.y >BUTTON_Y && position_player.y < BUTTON_Y+TILE_SIZE);
+}
+int is_near_button_farm() {
+    if(position_player.x>farm[1].x && position_player.x<farm[7].x+TILE_SIZE \
+        && position_player.y >farm[1].y && position_player.y < farm[35].y+TILE_SIZE)
     {
         return 1;
     }
@@ -42,28 +51,81 @@ static void quit(){
 
 }
 
+int y_cow=0;
+int x_cow=1; // tile-urile in functie de vacile cumparate
+
 static void handle_events(SDL_Event *event)
 {
     
     if(event->key.key == SDLK_E && event->key.repeat == 0 \
-        && event->key.down && is_near_button() && current_map == 0){
-        if(money>=20)
+        && event->key.down && is_near_button_cow() && current_map == 0){
+        if(money>=COW_PRICE && x_cow<10)
         {
-            money-=20;
+            money-=COW_PRICE;
             SDL_Log("Ai cumparat o vaca!\nMai ai %d bani!", money);
+            entities[entities_count++] = init_cow(renderer_cow, TILE_SIZE*(0.5+(((x_cow)%5)*2)), TILE_SIZE*(11+y_cow*1.5));
+            x_cow++;
+            if(x_cow %5 == 0)
+            {
+                SDL_Log("Ai 5 vaci!\nAi primit 100 de bani!");
+                money+=100;
+                y_cow++;
+            }
         }
-        else
-            SDL_Log("Nu ai destui bani! ");
+        else{
+            if(x_cow<10)
+                SDL_Log("Nu ai destui bani! ");
+            else
+                SDL_Log("Ai cumparat maximul de vaci!");
+        }
 
+    }
+    //daca apas pe buton fac astfel incat sa nu fie apasat de mai multe ori
+    if(event->key.key == SDLK_E && event->key.repeat == 0 \
+        && event->key.down && is_near_button_farm() && current_map == 0){
+        //daca e neplantata bucata de pamant si inca am crops valabile, pot planta
+        if(tile_maps[(int)position_player.y/TILE_SIZE][(int)position_player.x/TILE_SIZE]==3 && playerInventory.crops>0){
+            tile_maps[(int)position_player.y/TILE_SIZE][(int)position_player.x/TILE_SIZE]=4;
+            // timpul de plantare incepe
+            farm_time[(int)position_player.y/TILE_SIZE-1][(int)position_player.x/TILE_SIZE-4]=SDL_GetTicks();
+            playerInventory.crops--;
+        }
+        //daca a crescut, pot recolta
+        if(tile_maps[(int)position_player.y/TILE_SIZE][(int)position_player.x/TILE_SIZE]==6){
+            tile_maps[(int)position_player.y/TILE_SIZE][(int)position_player.x/TILE_SIZE]=3;//recoltam
+            playerInventory.wheat++;
+            SDL_Log("acum ai %d grau!", playerInventory.wheat);
+        }
     }
 }
 
 static void update(float delta_time) {
-    float new_x = position.x;
-    float new_y = position.y;
+    float new_x = position_player.x;
+    float new_y = position_player.y;
+    //variabila pentru bani primiti pasiv
     //static int last_time_for_money = 0;
 
     const _Bool *keyboard_state = SDL_GetKeyboardState(NULL);
+
+    //verificam daca trec 5 secunde de la plantare
+    for(int i=0; i<5; i++){
+        for(int j=0; j<7; j++){
+            if(farm_time[i][j] != 0 && SDL_GetTicks()-farm_time[i][j] > 5000)
+            {
+                if(tile_map[i+1][j+4]==5)
+                {
+                    tile_map[i+1][j+4]=6;
+                    farm_time[i][j]=0;
+                }
+                if(tile_map[i+1][j+4]==4)
+                {
+                    tile_map[i+1][j+4]=5;
+                    farm_time[i][j]=SDL_GetTicks();
+                }
+                
+            }
+        }
+    }
 
     if (keyboard_state[SDL_SCANCODE_W]) {
         new_y -= 100 * delta_time;
@@ -99,30 +161,30 @@ static void update(float delta_time) {
         new_x += 100 * delta_time;
     }
 
-    if (!check_collision(new_x, position.y)) {
-        position.x = new_x;
+    if (!check_collision(new_x, position_player.y)) {
+        position_player.x = new_x;
     }
 
-    if (!check_collision(position.x, new_y)) {
-        position.y = new_y;
+    if (!check_collision(position_player.x, new_y)) {
+        position_player.y = new_y;
     }
-    // uint32_t current_time = SDL_GetTicks();
-    // if(current_time-last_time_for_money > 5000)
-    // {
-    //     money+=20;
-    //     SDL_Log("Ai primit 20 de bani!");
-    //     last_time_for_money = current_time;
-    // } // primesti 20 de bani pasiv o data la 5 secunde
+    //// uint32_t current_time = SDL_GetTicks();
+    //// if(current_time-last_time_for_money > 5000)
+    //// {
+    ////     money+=20;
+    ////     SDL_Log("Ai primit 20 de bani!");
+    ////     last_time_for_money = current_time;
+    //// } // primesti 20 de bani pasiv o data la 5 secunde
 }
 
-static void render(SDL_Renderer* renderer){
-	SDL_FRect player_position = {position.x,position.y,PLAYER_WIDTH,PLAYER_HEIGHT};
+static void render(SDL_Renderer* renderer, Entity* this){
+	SDL_FRect player_position = {position_player.x,position_player.y,PLAYER_WIDTH,PLAYER_HEIGHT};
 	SDL_SetTextureScaleMode(player_texture, SDL_SCALEMODE_NEAREST);
 	SDL_RenderTexture(renderer, player_texture, &sprite_frame, &player_position);
 }
 
 Entity init_player(SDL_Renderer* renderer) {
-
+    renderer_cow = renderer;
 	const char path[] = "./assets/Player/Player.png";
 	player_texture = IMG_LoadTexture(renderer, path);
 
@@ -130,7 +192,7 @@ Entity init_player(SDL_Renderer* renderer) {
 		.quit = quit, 
 		.handle_events = handle_events, 
 		.update = update, 
-		.render = render
+		.render = render,
 	};
 
 	return player;

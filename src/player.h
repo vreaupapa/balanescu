@@ -8,4 +8,6 @@
 #define PLAYER_HEIGHT 50
 
 extern int money;
+extern int wheat;
+extern int crops;
 Entity init_player(SDL_Renderer* renderer);
