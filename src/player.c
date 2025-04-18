@@ -129,6 +129,8 @@ static void update(float delta_time) {
 
     if (keyboard_state[SDL_SCANCODE_W]) {
         new_y -= 100 * delta_time;
+        if(keyboard_state[SDL_SCANCODE_LSHIFT])
+            new_y -= 100*delta_time;
         if (new_y < 0) {  
             // Dacă trece de marginea sus, schimbă harta și repoziționează
             if (current_map == 0) {  
@@ -141,6 +143,8 @@ static void update(float delta_time) {
 
     if (keyboard_state[SDL_SCANCODE_S]) {
         new_y += 100 * delta_time;
+        if(keyboard_state[SDL_SCANCODE_LSHIFT])
+            new_y += 100*delta_time;
 		if (new_y > (MAP_HEIGHT * TILE_SIZE - TILE_SIZE) \
         /*&& new_x>(11 * TILE_SIZE) && new_x<(12.20*TILE_SIZE) cod pentru tp specific*/) {
             // Dacă trece de marginea jos, schimbă harta și repoziționează
@@ -154,11 +158,16 @@ static void update(float delta_time) {
 
     if (keyboard_state[SDL_SCANCODE_A]) {
         new_x -= 100 * delta_time;
+        if(keyboard_state[SDL_SCANCODE_LSHIFT])
+            new_x -= 100*delta_time;
         if (new_x < 0) new_x = 0;  // Pentru a bloca la marginea din stanga
     }
 
     if (keyboard_state[SDL_SCANCODE_D]) {
         new_x += 100 * delta_time;
+        
+        if(keyboard_state[SDL_SCANCODE_LSHIFT])
+            new_x += 100*delta_time;
     }
 
     if (!check_collision(new_x, position_player.y)) {
@@ -168,13 +177,15 @@ static void update(float delta_time) {
     if (!check_collision(position_player.x, new_y)) {
         position_player.y = new_y;
     }
-    //// uint32_t current_time = SDL_GetTicks();
-    //// if(current_time-last_time_for_money > 5000)
-    //// {
-    ////     money+=20;
-    ////     SDL_Log("Ai primit 20 de bani!");
-    ////     last_time_for_money = current_time;
-    //// } // primesti 20 de bani pasiv o data la 5 secunde
+    // sistem pasiv de bani
+    
+    // uint32_t current_time = SDL_GetTicks();
+    // if(current_time-last_time_for_money > 5000)
+    // {
+    //     money+=20;
+    //     SDL_Log("Ai primit 20 de bani!");
+    //     last_time_for_money = current_time;
+    // } // primesti 20 de bani pasiv o data la 5 secunde
 }
 
 static void render(SDL_Renderer* renderer, Entity* this){
@@ -189,9 +200,9 @@ Entity init_player(SDL_Renderer* renderer) {
 	player_texture = IMG_LoadTexture(renderer, path);
 
 	Entity player = {
-		.quit = quit, 
-		.handle_events = handle_events, 
-		.update = update, 
+		.quit = quit,
+		.handle_events = handle_events,
+		.update = update,
 		.render = render,
 	};
 

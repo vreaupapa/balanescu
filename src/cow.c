@@ -55,8 +55,8 @@ Entity init_cow(SDL_Renderer* renderer, float x, float y) {
 	}
 
 	Entity cow = {
-		.quit = quit, 
-		.handle_events = handle_events, 
+		.quit = quit,
+		.handle_events = handle_events,
 		.update = update,
 		.render = render,
 		.position = {x, y}

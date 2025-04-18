@@ -45,7 +45,7 @@ const int frameDelay = 1000/ FPS; // timpul in milisecunde per cadru
 Button farm[36];
 
 
-// //TTF_Font* font = NULL;
+TTF_Font* font = NULL;
 // SDL_Texture* inventoryTexture = NULL;
 // SDL_FRect inventoryFRect;
 
@@ -77,6 +77,7 @@ void update() {
   current_tick = SDL_GetTicks();
   delta_time = (current_tick - last_tick) / 1000.0f;
   UPDATE_ENTITIES(entities, entities_count, delta_time);
+  update_inventory_texture(renderer, font);
 }
 
 void render() {
@@ -87,6 +88,8 @@ void render() {
   render_button(renderer);
   //render for everything
   RENDER_ENTITIES(entities, entities_count, renderer);
+  //render pentru inventar
+  render_inventory(renderer);
   
   // if (textTexture) {
   //   SDL_RenderTexture(renderer, textTexture, NULL, &textRect);
@@ -145,12 +148,13 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
   //test
   
     //Încarcă fontul
-    TTF_Font* font = TTF_OpenFont("./Fonts/joystix monospace.ttf", 32);
+    font = TTF_OpenFont("./Fonts/joystix monospace.ttf", 32);
     if (!font) {
         SDL_Log("Eroare încărcare font: %s\n", SDL_GetError());
         return -1;
     }
-    //SDL_Color textColor = {255, 255, 255};
+    //test
+    // SDL_Color textColor = {255, 255, 255};
     // SDL_Surface* textSurface = TTF_RenderText_Solid(font, "Hello, SDL_ttf!", 15, textColor);
     // if(!textSurface)
     // {
@@ -163,7 +167,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
     //   return -1;
     // }
 
-    update_inventory_texture(renderer, font);
+    //update_inventory_texture(renderer, font);
 
     
   // textRect.x = 100;
@@ -172,7 +176,12 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv) {
   // textRect.h = textSurface->h;
 
   //SDL_DestroySurface(textSurface);
-  //stop
+
+  //test 2 pentru inventar
+
+  init_inventory_textures(renderer);
+
+  //stop test
 
   //incarc texturi pt fundal
   load_tiles(renderer);
