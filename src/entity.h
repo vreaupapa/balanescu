@@ -10,8 +10,9 @@ typedef struct Entity Entity;
 
 struct Entity {
 	void(*quit)(void);
-	void(*handle_events)(SDL_Event*);
+	void(*handle_events)(SDL_Event*, struct Entity*);
 	void(*update)(float);
+	void(*render_shop)(SDL_Renderer*, struct Entity*, int);
 	void (*render)(SDL_Renderer*, struct Entity*);
 	Position position;
 };

@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "inventory.h": "c",
+        "sdl.h": "c",
+        "entity.h": "c"
+    }
+}
