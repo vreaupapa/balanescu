@@ -5,14 +5,14 @@ Button button = { BUTTON_X, BUTTON_Y, 60, 60};
 
 int tile_map[MAP_HEIGHT][MAP_WIDTH] = {
     {0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0},
-    {0, 1, 1, 0, 3, 3, 3, 3, 3, 3, 3, 0, 1, 1, 0},
-    {0, 1, 1, 0, 3, 3, 3, 3, 3, 3, 3, 0, 1, 1, 0},
-    {0, 1, 1, 0, 3, 3, 3, 3, 3, 3, 3, 0, 1, 1, 0},
-    {0, 1, 1, 0, 3, 3, 3, 3, 3, 3, 3, 0, 1, 1, 0},
-    {0, 1, 1, 0, 3, 3, 3, 3, 3, 3, 3, 0, 1, 1, 0},
+    {0, 1, 1, 0, 3, 3, 8, 8, 8, 8, 8, 0, 1, 1, 0},
+    {0, 1, 1, 0, 3, 3, 8, 8, 8, 8, 8, 0, 1, 1, 0},
+    {0, 1, 1, 0, 3, 3, 8, 8, 8, 8, 8, 0, 1, 1, 0},
+    {0, 1, 1, 0, 3, 3, 8, 8, 8, 8, 8, 0, 1, 1, 0},
+    {0, 1, 1, 0, 3, 3, 8, 8, 8, 8, 8, 0, 1, 1, 0},
     {0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0},
-    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
-    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
+    {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
+    {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0},
@@ -22,21 +22,21 @@ int tile_map[MAP_HEIGHT][MAP_WIDTH] = {
 };
 
 int map2[MAP_HEIGHT][MAP_WIDTH] = { 
-    {0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0},
-    {0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-    {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1},
-    {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1},
-    {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1},
-    {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1},
-    {1, 1, 0, 0, 0, 2, 2, 0, 0, 0, 1, 1, 1, 1, 1},
-    {1, 1, 0, 0, 0, 0, 2, 0, 0, 0, 1, 1, 1, 1, 1},
-    {1, 1, 0, 0, 0, 0, 2, 0, 0, 0, 1, 1, 1, 1, 1},
-    {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1},
-    {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1}
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0},
+    {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
+    {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
+    {0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0},
+    {0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0},
+    {0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0},
+    {0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0},
+    {0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0},
+    {0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0},
+    {0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0},
+    {0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0}
 };
 
 
@@ -45,7 +45,7 @@ int current_map = 0;
 
 int (*tile_maps)[MAP_WIDTH] = tile_map;
 
-SDL_Texture* tile_textures[7];
+SDL_Texture* tile_textures[10];
 SDL_Texture* carti_shop_texture;
 
 // void activate_button() {
@@ -61,13 +61,15 @@ void load_tiles(SDL_Renderer *renderer) {
     tile_textures[0] = IMG_LoadTexture(renderer, "./assets/Tiles/pixel.jpg");
     tile_textures[1] = IMG_LoadTexture(renderer, "./assets/Tiles/Path_middle.png");
     tile_textures[2] = IMG_LoadTexture(renderer, "./assets/Tiles/Water_Middle.png");
-    tile_textures[3] = IMG_LoadTexture(renderer, "./assets/Tiles/FarmLand_Tile.png");
+    tile_textures[3] = IMG_LoadTexture(renderer, "./assets/Tiles/FarmLand_Tile_no_water.png");
     tile_textures[4] = IMG_LoadTexture(renderer, "./assets/Tiles/plantat.png");
-    tile_textures[5] = IMG_LoadTexture(renderer, "./assets/Tiles/plantat2.png");
-    tile_textures[6] = IMG_LoadTexture(renderer, "./assets/Tiles/plantat3.png");
+    tile_textures[5] = IMG_LoadTexture(renderer, "./assets/Tiles/plantat1.png");
+    tile_textures[6] = IMG_LoadTexture(renderer, "./assets/Tiles/plantat2.png");
+    tile_textures[7] = IMG_LoadTexture(renderer, "./assets/Tiles/plantat3.png");
+    tile_textures[8] = IMG_LoadTexture(renderer, "./assets/Tiles/FarmLand_Tile_locked.png");
     carti_shop_texture = IMG_LoadTexture(renderer, "./assets/carti/carti.png");
   
-    for (int i = 0; i < 7; i++) {
+    for (int i = 0; i < 8; i++) {
         if (!tile_textures[i]) {
             SDL_Log("Failed to load tile %d: %s", i, SDL_GetError());
         }
@@ -104,7 +106,7 @@ void render_map(SDL_Renderer *renderer) {
 void render_carti(SDL_Renderer *renderer){
     if(current_map == 1){
         
-        SDL_FRect carti_rect = { 5*TILE_SIZE, 5*TILE_SIZE, 60,  120};
+        SDL_FRect carti_rect = { 7*TILE_SIZE, 5*TILE_SIZE, 60,  120};
         SDL_SetTextureScaleMode(carti_shop_texture, SDL_SCALEMODE_NEAREST);
         SDL_RenderTexture(renderer, carti_shop_texture, NULL, &carti_rect);
     }

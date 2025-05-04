@@ -11,6 +11,7 @@ static SDL_Texture* player_texture;
 static SDL_FRect sprite_frame = {8,5,15,21};
 //int money = 100; // bani initiali
 int farm_time[5][7] = {0}; // timpul de crestere al plantelor
+int bucket_limit = 1;
 
 typedef struct{
 	float x, y;
@@ -50,9 +51,17 @@ int is_near_button_cow_shop() {
 }
 
 int is_near_button_carti_shop() {
-    return(position_player.x>buton_carti_shop.x && position_player.x<buton_carti_shop.x+TILE_SIZE \
-        && position_player.y >buton_carti_shop.y && position_player.y < buton_carti_shop.y+TILE_SIZE);
+    return(position_player.x>buton_carti_shop.x && position_player.x<buton_carti_shop.x+(3*TILE_SIZE) \
+        && position_player.y >buton_carti_shop.y && position_player.y < buton_carti_shop.y+(4*TILE_SIZE));
 }
+
+int is_near_water() {
+    return((tile_maps[(int)(position_player.y/TILE_SIZE)][(int)(position_player.x/TILE_SIZE)+1]==2) || 
+        (tile_maps[(int)(position_player.y/TILE_SIZE)][(int)(position_player.x/TILE_SIZE)-1]==2) || 
+        (tile_maps[(int)(position_player.y/TILE_SIZE)+1][(int)(position_player.x/TILE_SIZE)]==2) || 
+        (tile_maps[(int)(position_player.y/TILE_SIZE)-1][(int)(position_player.x/TILE_SIZE)]==2));
+}
+
 static void quit(){
 
 }
@@ -73,8 +82,8 @@ static void handle_events(SDL_Event *event, Entity* this)
             x_cow++;
             if(x_cow %5 == 0)
             {
-                SDL_Log("Ai 5 vaci!\nAi primit 100 de bani!");
-                playerInventory.coins+=100;
+                //SDL_Log("Ai 5 vaci!\nAi primit 100 de bani!");
+                //playerInventory.coins+=100;
                 y_cow++;
             }
         }
@@ -89,15 +98,26 @@ static void handle_events(SDL_Event *event, Entity* this)
     //daca apas pe buton fac astfel incat sa nu fie apasat de mai multe ori
     if(event->key.key == SDLK_E && event->key.repeat == 0 \
         && event->key.down && is_near_button_farm() && current_map == 0){
+        
+
+        if(tile_maps[(int)position_player.y/TILE_SIZE][(int)position_player.x/TILE_SIZE]==4 && playerInventory.bucket>0){
+            tile_maps[(int)position_player.y/TILE_SIZE][(int)position_player.x/TILE_SIZE]=5;
+            farm_time[(int)position_player.y/TILE_SIZE-1][(int)position_player.x/TILE_SIZE-4]=SDL_GetTicks();
+            playerInventory.bucket--;
+        }
         //daca e neplantata bucata de pamant si inca am crops valabile, pot planta
         if(tile_maps[(int)position_player.y/TILE_SIZE][(int)position_player.x/TILE_SIZE]==3 && playerInventory.crops>0){
             tile_maps[(int)position_player.y/TILE_SIZE][(int)position_player.x/TILE_SIZE]=4;
             // timpul de plantare incepe
-            farm_time[(int)position_player.y/TILE_SIZE-1][(int)position_player.x/TILE_SIZE-4]=SDL_GetTicks();
+            //farm_time[(int)position_player.y/TILE_SIZE-1][(int)position_player.x/TILE_SIZE-4]=SDL_GetTicks();
             playerInventory.crops--;
         }
+        if(tile_maps[(int)position_player.y/TILE_SIZE][(int)position_player.x/TILE_SIZE]==8 && playerInventory.coins>=25){
+            tile_maps[(int)position_player.y/TILE_SIZE][(int)position_player.x/TILE_SIZE]=3;
+            playerInventory.coins-=25;
+        }
         //daca a crescut, pot recolta
-        if(tile_maps[(int)position_player.y/TILE_SIZE][(int)position_player.x/TILE_SIZE]==6){
+        if(tile_maps[(int)position_player.y/TILE_SIZE][(int)position_player.x/TILE_SIZE]==7){
             tile_maps[(int)position_player.y/TILE_SIZE][(int)position_player.x/TILE_SIZE]=3;//recoltam
             playerInventory.wheat++;
             SDL_Log("acum ai %d grau!", playerInventory.wheat);
@@ -129,12 +149,24 @@ static void handle_events(SDL_Event *event, Entity* this)
                 buton_carti_shop.is_pressed = 0;
             }
         }
+
+    
+    if(event->key.key == SDLK_E && event->key.repeat == 0 \
+        && event->key.down){
+            SDL_Log("%d %d", (int)position_player.x/TILE_SIZE, (int)position_player.y/TILE_SIZE);
+        }
+
+    if(event->key.key == SDLK_E && event->key.repeat == 0 \
+        && event->key.down && is_near_water()){
+            if(playerInventory.bucket < bucket_limit)
+                playerInventory.bucket++;
+        }
 }
 
 //280, 360, 100, 50
 
 static void update(float delta_time) {
-    if(!buton_cow_shop.is_pressed){//oprim movementul cand e deschis cow shop
+    if(!buton_cow_shop.is_pressed && !buton_carti_shop.is_pressed){//oprim movementul cand e deschis cow shop
         float new_x = position_player.x;
         float new_y = position_player.y;
         //variabila pentru bani primiti pasiv
@@ -147,14 +179,14 @@ static void update(float delta_time) {
             for(int j=0; j<7; j++){
                 if(farm_time[i][j] != 0 && SDL_GetTicks()-farm_time[i][j] > 5000)
                 {
+                    if(tile_map[i+1][j+4]==6)
+                    {
+                        tile_map[i+1][j+4]=7;
+                        farm_time[i][j]=0;
+                    }
                     if(tile_map[i+1][j+4]==5)
                     {
                         tile_map[i+1][j+4]=6;
-                        farm_time[i][j]=0;
-                    }
-                    if(tile_map[i+1][j+4]==4)
-                    {
-                        tile_map[i+1][j+4]=5;
                         farm_time[i][j]=SDL_GetTicks();
                     }
                     
@@ -164,7 +196,7 @@ static void update(float delta_time) {
 
         if (keyboard_state[SDL_SCANCODE_W]) {
             new_y -= 100 * delta_time;
-            if(keyboard_state[SDL_SCANCODE_LSHIFT])
+            if(keyboard_state[SDL_SCANCODE_LSHIFT] && playerInventory.sprint == 1)
                 new_y -= 100*delta_time;
             if (new_y < 0) {  
                 // Dacă trece de marginea sus, schimbă harta și repoziționează
@@ -178,7 +210,7 @@ static void update(float delta_time) {
 
         if (keyboard_state[SDL_SCANCODE_S]) {
             new_y += 100 * delta_time;
-            if(keyboard_state[SDL_SCANCODE_LSHIFT])
+            if(keyboard_state[SDL_SCANCODE_LSHIFT] && playerInventory.sprint == 1)
                 new_y += 100*delta_time;
             if (new_y > (MAP_HEIGHT * TILE_SIZE - TILE_SIZE) \
             /*&& new_x>(11 * TILE_SIZE) && new_x<(12.20*TILE_SIZE) cod pentru tp specific*/) {
@@ -193,7 +225,7 @@ static void update(float delta_time) {
 
         if (keyboard_state[SDL_SCANCODE_A]) {
             new_x -= 100 * delta_time;
-            if(keyboard_state[SDL_SCANCODE_LSHIFT])
+            if(keyboard_state[SDL_SCANCODE_LSHIFT] && playerInventory.sprint == 1)
                 new_x -= 100*delta_time;
             if (new_x < 0) new_x = 0;  // Pentru a bloca la marginea din stanga
         }
@@ -201,7 +233,7 @@ static void update(float delta_time) {
         if (keyboard_state[SDL_SCANCODE_D]) {
             new_x += 100 * delta_time;
             
-            if(keyboard_state[SDL_SCANCODE_LSHIFT])
+            if(keyboard_state[SDL_SCANCODE_LSHIFT] && playerInventory.sprint == 1)
                 new_x += 100*delta_time;
         }
 

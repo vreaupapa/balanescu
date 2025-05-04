@@ -11,6 +11,8 @@ typedef struct {
     int crops;
     int milk;
     int coins;
+    int bucket;
+    int sprint;
 } Inventory;
 
 // typedef struct{

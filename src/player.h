@@ -10,4 +10,5 @@
 // extern int money;
 // extern int wheat;
 // extern int crops;
+extern int bucket_limit;
 Entity init_player(SDL_Renderer* renderer);
