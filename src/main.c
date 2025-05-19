@@ -144,7 +144,7 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
         }
       }
     }
-  //i want to detect the moujse position if i click on the play button
+  //i want to detect the mouse position if i click on the play button
   if(event->type == SDL_EVENT_MOUSE_BUTTON_DOWN && event->button.button == SDL_BUTTON_LEFT && play_button == 0)
   {
     if(event->button.x > 300 && event->button.x < 600 &&

@@ -47,6 +47,7 @@ int (*tile_maps)[MAP_WIDTH] = tile_map;
 
 SDL_Texture* tile_textures[10];
 SDL_Texture* carti_shop_texture;
+SDL_Texture* tree_texture;
 
 // void activate_button() {
 //     if (money >= button.price) {
@@ -68,6 +69,7 @@ void load_tiles(SDL_Renderer *renderer) {
     tile_textures[7] = IMG_LoadTexture(renderer, "./assets/Tiles/plantat3.png");
     tile_textures[8] = IMG_LoadTexture(renderer, "./assets/Tiles/FarmLand_Tile_locked.png");
     carti_shop_texture = IMG_LoadTexture(renderer, "./assets/carti/carti.png");
+    tree_texture = IMG_LoadTexture(renderer, "./assets/Outdoor decoration/Oak_Tree.png");
   
     for (int i = 0; i < 8; i++) {
         if (!tile_textures[i]) {
@@ -76,6 +78,9 @@ void load_tiles(SDL_Renderer *renderer) {
     }
     if(!carti_shop_texture) {
         SDL_Log("Failed to load carti shop texture: %s", SDL_GetError());
+    }
+    if(!tree_texture) {
+        SDL_Log("Failed to load tree texture: %s", SDL_GetError());
     }
 }
 
@@ -101,6 +106,26 @@ void render_map(SDL_Renderer *renderer) {
     //     SDL_FRect dest = {y*TILE_SIZE, 8*TILE_SIZE, TILE_SIZE, TILE_SIZE};
     //     SDL_RenderTexture(renderer, tile_textures[3], &sprite_frame, &dest);
     // }
+    if(current_map == 1 && tree_texture) {
+        SDL_FRect tree_rect = {3 * TILE_SIZE, 1 * TILE_SIZE, 200, 240};
+        SDL_RenderTexture(renderer, tree_texture, NULL, &tree_rect);
+        SDL_FRect tree_rect2 = {9 * TILE_SIZE, 1 * TILE_SIZE, 200, 240};
+        SDL_RenderTexture(renderer, tree_texture, NULL, &tree_rect2);
+        SDL_FRect tree_rect3 = {3 * TILE_SIZE, 7 * TILE_SIZE, 200, 240};
+        SDL_RenderTexture(renderer, tree_texture, NULL, &tree_rect3);
+        SDL_FRect tree_rect4 = {9 * TILE_SIZE, 7 * TILE_SIZE, 200, 240};
+        SDL_RenderTexture(renderer, tree_texture, NULL, &tree_rect4);
+        SDL_FRect tree_rect5 = {3 * TILE_SIZE, 11 * TILE_SIZE, 200, 240};
+        SDL_RenderTexture(renderer, tree_texture, NULL, &tree_rect5);
+        SDL_FRect tree_rect6 = {9 * TILE_SIZE, 11 * TILE_SIZE, 200, 240};
+        SDL_RenderTexture(renderer, tree_texture, NULL, &tree_rect6);
+        SDL_FRect tree_rect7 = {0 * TILE_SIZE, 1 * TILE_SIZE, 200, 240};
+        SDL_RenderTexture(renderer, tree_texture, NULL, &tree_rect7);
+        SDL_FRect tree_rect8 = {12 * TILE_SIZE, 1 * TILE_SIZE, 200, 240};
+        SDL_RenderTexture(renderer, tree_texture, NULL, &tree_rect8);
+        SDL_FRect tree_rect9 = {5.8 * TILE_SIZE, 0.5 * TILE_SIZE, 200, 240};
+        SDL_RenderTexture(renderer, tree_texture, NULL, &tree_rect9);
+    }
 }
 
 void render_carti(SDL_Renderer *renderer){

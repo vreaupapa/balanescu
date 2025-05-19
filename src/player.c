@@ -166,7 +166,7 @@ static void handle_events(SDL_Event *event, Entity* this)
 //280, 360, 100, 50
 
 static void update(float delta_time) {
-    if(!buton_cow_shop.is_pressed && !buton_carti_shop.is_pressed){//oprim movementul cand e deschis cow shop
+    if(!buton_cow_shop.is_pressed && !buton_carti_shop.is_pressed){//oprim movementul cand e deschis cow sau carti shop
         float new_x = position_player.x;
         float new_y = position_player.y;
         //variabila pentru bani primiti pasiv
